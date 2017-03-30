@@ -38,7 +38,14 @@ class HuffmanNode extends HuffmanTree
 
 public class HuffmanCode
 {
-	public static HuffmanTree buildTree(int [] charFreqs)
+	TreeMap <String,String> map = null;
+	HuffmanTree tree = null;
+	public HuffmanCode()
+	{
+		map = new TreeMap<String,String>();
+	}
+
+	public HuffmanTree buildTree(int [] charFreqs)
 	{
 		PriorityQueue<HuffmanTree> trees = new PriorityQueue<HuffmanTree>();
 		for(int i=0;i<charFreqs.length;++i)
@@ -56,13 +63,16 @@ public class HuffmanCode
 		return trees.poll();
 	}
 
-	public static void printCodes(HuffmanTree tree, StringBuffer prefix)
+	public void printCodes(HuffmanTree tree, StringBuffer prefix)
 	{
 		assert tree != null;
 		if(tree instanceof HuffmanLeaf)
 		{
 			HuffmanLeaf leaf = (HuffmanLeaf)tree;
 			System.out.println(leaf.value +"\t"+leaf.frequency+"\t"+prefix);
+			map.put(""+leaf.value, prefix.toString());
+			//getCode(""+leaf.value);
+
 		}
 		else if (tree instanceof HuffmanNode)
 		{
@@ -78,11 +88,11 @@ public class HuffmanCode
 		}
 	}
 
-	public static HuffmanLeaf getCode(HuffmanTree tree)
+	public String getCode(String c)
 	{
-
+		String s= map.get(c);
+		return s;
 	}
-
 }
 
 
