@@ -38,8 +38,8 @@ class HuffmanNode extends HuffmanTree
 
 public class HuffmanCode
 {
-	TreeMap <String,String> map = null;
-	TreeMap <String,String> _map = null;
+	TreeMap <String,String>  map =  new TreeMap<String,String>();
+	TreeMap <String,String> _map =  new TreeMap<String,String>();
 	HuffmanTree tree = null;
 	public HuffmanCode()
 	{

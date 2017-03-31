@@ -30,7 +30,7 @@ public class Encoder
 		
 		huffmanEncoding(alphabet,code, character);
 
-		f1 = generateText(alphabet,total,10);
+		f1 = generateText(alphabet,total,100000);
 		f2 = f1;
 
 		double avg = simple_encode(f1,code);
@@ -60,7 +60,9 @@ public class Encoder
 		double doubleEntropy = calcEntropy(doubleSymbol,doubleTotal);
 		
 		HuffmanCode doubleCode = new HuffmanCode();
+
 		huffmanEncoding(doubleSymbol,doubleCode,doubleChracter);
+
 		System.out.println("Entropy: "+doubleEntropy);
 		avg = simple_double_encode(f2,doubleCode);
 		System.out.println("bit average = "+avg);
@@ -150,8 +152,7 @@ public class Encoder
 					String s = code.getCode(""+c);
 					totalBit+=s.length();
 					count++;
-					String _s = code.getCode(s);
-					fw.write(_s+"\n");
+					fw.write(s+"\n");
 				}
 				catch(Exception e){}
 			}
@@ -235,9 +236,7 @@ public class Encoder
 					String s = code.getCode(""+c);
 					totalBit+=s.length();
 					count++;
-					String _s = code.getCode(s);
-					//System.out.print(_s);
-					fw.write(_s+"\n");
+					fw.write(s+"\n");
 				}
 				catch(Exception e){}
 			}
