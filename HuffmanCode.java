@@ -15,9 +15,9 @@ abstract class HuffmanTree implements Comparable<HuffmanTree>
 
 class HuffmanLeaf extends HuffmanTree
 {
-	public final char value;
+	public final String value;
 
-	public HuffmanLeaf(int freq, char val)
+	public HuffmanLeaf(int freq, String val)
 	{
 		super(freq);
 		value  = val;
@@ -39,19 +39,25 @@ class HuffmanNode extends HuffmanTree
 public class HuffmanCode
 {
 	TreeMap <String,String> map = null;
+	TreeMap <String,String> _map = null;
 	HuffmanTree tree = null;
 	public HuffmanCode()
 	{
-		map = new TreeMap<String,String>();
+		map  = new TreeMap<String,String>();
+		_map = new TreeMap<String,String>();
 	}
 
-	public HuffmanTree buildTree(int [] charFreqs)
+	public HuffmanTree buildTree(int [] charFreqs, String[] alphabet)
 	{
 		PriorityQueue<HuffmanTree> trees = new PriorityQueue<HuffmanTree>();
 		for(int i=0;i<charFreqs.length;++i)
 		{
 			if(charFreqs[i]>0)
-				trees.offer(new HuffmanLeaf(charFreqs[i], (char)(65+i)));
+			{
+				String character = alphabet[i];
+				trees.offer(new HuffmanLeaf(charFreqs[i], character));
+			}
+				
 		}
 		assert trees.size()>0;
 		while(trees.size()>1)
@@ -71,6 +77,7 @@ public class HuffmanCode
 			HuffmanLeaf leaf = (HuffmanLeaf)tree;
 			System.out.println(leaf.value +"\t"+leaf.frequency+"\t"+prefix);
 			map.put(""+leaf.value, prefix.toString());
+			_map.put(prefix.toString(),""+leaf.value);
 			//getCode(""+leaf.value);
 
 		}
@@ -92,6 +99,10 @@ public class HuffmanCode
 	{
 		String s= map.get(c);
 		return s;
+	}
+	public String getKey(String c)
+	{
+		return _map.get(c);
 	}
 }
 
