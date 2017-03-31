@@ -7,6 +7,7 @@ public class Encoder
 	public static void main(String[] args) throws java.io.IOException
 	{
 		// (1)read in probability of language
+		System.out.println("******** Single Sysmbol language ********");
 		double total = 0;	//denominator
 		int c = 0;		//counter
 		int[] alphabet = new int[26];
@@ -15,6 +16,7 @@ public class Encoder
 		HuffmanCode code = new HuffmanCode();
 		File f1=null;
 		File f2=null;
+		File f3=null;
 		while(sc.hasNextLine())
 		{
 			int i = Integer.parseInt(sc.nextLine());
@@ -24,35 +26,16 @@ public class Encoder
 			c++;
 		}
 
-		//test for (1)
-		/*System.out.println("Test of step 1");
-		for(int i = 0;i<alphabet.length;++i)
-		{
-			if(alphabet[i]!=0)
-				System.out.println(alphabet[i]);
-		}
-		System.out.println(total);
-		System.out.println("Finished testing");*/
-
 		double entropy = calcEntropy(alphabet,total);
 		
-
 		huffmanEncoding(alphabet,code, character);
-		
-		/*for(int i =0;i<code.map.size();++i)
-		{
-			String s = ""+(char)(i+65);
-			System.out.println("Encoding for "+s+" is "+ code.getCode(s));
-		}*/
 
 		f1 = generateText(alphabet,total,10);
 		f2 = f1;
 
-		//double avg = simple_encode("testTest.txt", code);
 		double avg = simple_encode(f1,code);
 		System.out.println("Entropy: "+entropy);
 		System.out.println("bit average = "+avg);
-		//simple_decode("testTest.enc1", code);
 		simple_decode("enc1.txt",code);
 
 		double err = Math.abs((avg-entropy)/avg) * 100;
@@ -73,34 +56,19 @@ public class Encoder
 			}
 		}
 		int[] doubleSymbol = create2symbol(alphabet,total);
-		/*for(int i =0;i<doubleSymbol.length;++i)
-		{
-			if(doubleSymbol[i]!=0)
-				System.out.println(doubleSymbol[i]);
-		}
-		*/
 		double doubleTotal = total*total;
 		double doubleEntropy = calcEntropy(doubleSymbol,doubleTotal);
 		
-		//
 		HuffmanCode doubleCode = new HuffmanCode();
 		huffmanEncoding(doubleSymbol,doubleCode,doubleChracter);
 		System.out.println("Entropy: "+doubleEntropy);
 		avg = simple_double_encode(f2,doubleCode);
 		System.out.println("bit average = "+avg);
+		simple_double_decode("enc2.txt",doubleCode);
 
 		err = Math.abs((avg-doubleEntropy)/avg) * 100;
 
 		System.out.println("Present Error: "+err);
-
-
-		//use Huffman algorithm encoding to create a binary encoding
-		//generate text based on frequency
-		//measure the efficiency of encoding
-		//create 2-symbol dervived alphabet
-		//create Huffman encoding for new alphabet
-		//create a new text based on new frequency
-		
 
 	}
 
@@ -138,7 +106,7 @@ public class Encoder
 			//System.out.println(map.get(map.floorKey(num)));
 			try
 			{
-				bw.write(map.get(map.floorKey(num)));
+				bw.write(""+map.get(map.floorKey(num)));
 			}
 			catch(Exception e){}
 			
@@ -167,11 +135,8 @@ public class Encoder
 		Scanner sc = null;
 		try
 		{
-			//File f = new File(file);
-			//System.out.println(f.getAbsolutePath());
-			//fw = new FileWriter("testText.enc1");
 			fw = new FileWriter("enc1.txt");
-			bw = new BufferedWriter(fw);
+			//bw = new BufferedWriter(fw);
 			sc = new Scanner(file);
 		}
 		catch(Exception e){}
@@ -185,8 +150,8 @@ public class Encoder
 					String s = code.getCode(""+c);
 					totalBit+=s.length();
 					count++;
-					//bw.write(code.getCode(""+c)+"\n");
-					bw.write(code.getCode(s+"\n"));
+					String _s = code.getCode(s);
+					fw.write(_s+"\n");
 				}
 				catch(Exception e){}
 			}
@@ -227,7 +192,8 @@ public class Encoder
 			{
 				try
 				{
-					bw.write(code.getKey(line));
+					String s = code.getKey(line);
+					fw.write(s);
 				}
 				catch(Exception e){}
 			}
@@ -254,7 +220,7 @@ public class Encoder
 		try
 		{
 			fw = new FileWriter("enc2.txt");
-			bw = new BufferedWriter(fw);
+			//bw = new BufferedWriter(fw);
 			_sc = new Scanner(file);
 		}
 		catch(Exception e){System.out.println(e);}
@@ -266,11 +232,12 @@ public class Encoder
 				String c = ""+line.charAt(i)+line.charAt(i+1);
 				try
 				{
-					String s = code.getCode(c);
+					String s = code.getCode(""+c);
 					totalBit+=s.length();
 					count++;
-					//bw.write(code.getCode(""+c)+"\n");
-					bw.write(code.getCode(s+"\n"));
+					String _s = code.getCode(s);
+					//System.out.print(_s);
+					fw.write(_s+"\n");
 				}
 				catch(Exception e){}
 			}
@@ -295,13 +262,9 @@ public class Encoder
 		Scanner sc = null;
 		try
 		{
-			System.out.println(new File("."));
 			fw = new FileWriter("testText.dec2");
-			//System.out.println("*");
 			bw = new BufferedWriter(fw);
 			File f = new File(file);
-			//System.out.println(f.getPath());
-			//System.out.println(f.exists());
 			sc = new Scanner(f);
 		}
 		catch(Exception e){System.out.println(e);}
@@ -312,7 +275,8 @@ public class Encoder
 			{
 				try
 				{
-					bw.write(code.getKey(line));
+					String s = ""+code.getKey(line);
+					fw.write(s);
 				}
 				catch(Exception e){}
 			}

@@ -15,7 +15,7 @@ abstract class HuffmanTree implements Comparable<HuffmanTree>
 
 class HuffmanLeaf extends HuffmanTree
 {
-	public final String value;
+	public String value;
 
 	public HuffmanLeaf(int freq, String val)
 	{
@@ -78,6 +78,7 @@ public class HuffmanCode
 			System.out.println(leaf.value +"\t"+leaf.frequency+"\t"+prefix);
 			map.put(""+leaf.value, prefix.toString());
 			_map.put(prefix.toString(),""+leaf.value);
+
 			//getCode(""+leaf.value);
 
 		}
