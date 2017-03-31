@@ -6,17 +6,19 @@ public class Encoder
 {
 	public static void main(String[] args) throws java.io.IOException
 	{
-		// (1)read in probability of language
-		System.out.println("******** Single Sysmbol language ********");
+		//Setup
 		double total = 0;	//denominator
 		int c = 0;		//counter
 		int[] alphabet = new int[26];
 		String[] character = new String[26];
 		Scanner sc = new Scanner(new File (args[0]));
 		HuffmanCode code = new HuffmanCode();
-		File f1=null;
-		File f2=null;
-		File f3=null;
+		File f1=null;	//testText
+		File f2=null;	//testText
+		File f3=null;	//enc1
+		File f4=null;	//enc2
+
+		//single symbol
 		while(sc.hasNextLine())
 		{
 			int i = Integer.parseInt(sc.nextLine());
@@ -28,21 +30,27 @@ public class Encoder
 
 		double entropy = calcEntropy(alphabet,total);
 		
-		huffmanEncoding(alphabet,code, character);
-
-		f1 = generateText(alphabet,total,100000);
+		f1 = generateText(alphabet,total,Integer.parseInt(args[1]));
 		f2 = f1;
-
-		double avg = simple_encode(f1,code);
+		Scanner sc1 = new Scanner(f1);
+		System.out.println("Text from testText.txt:");
+		while(sc1.hasNextLine())
+			System.out.println(sc1.nextLine());
+		System.out.println();
+		System.out.println("******** Single Symbol language ********");
+		huffmanEncoding(alphabet,code, character);
 		System.out.println("Entropy: "+entropy);
-		System.out.println("bit average = "+avg);
-		simple_decode("enc1.txt",code);
+		f3 = simple_encode(f1,code,entropy);
+		sc1 = new Scanner(f3);
+		System.out.println("Text from testTest.enc1:");
+		while(sc1.hasNextLine())
+			System.out.println(sc1.nextLine());
 
-		double err = Math.abs((avg-entropy)/avg) * 100;
+		System.out.println("Text from testTest.dec1:");
+		simple_decode(f3,code);
+		System.out.println("\n");
 
-		System.out.println("Present Error: "+err);
-
-		System.out.println("******** Double Sysmbol language ********");
+		System.out.println("******** Double Symbol language ********");
 		c = 0;
 		String[] doubleChracter = new String[676];
 		for(int i =0;i<26;++i)
@@ -64,13 +72,14 @@ public class Encoder
 		huffmanEncoding(doubleSymbol,doubleCode,doubleChracter);
 
 		System.out.println("Entropy: "+doubleEntropy);
-		avg = simple_double_encode(f2,doubleCode);
-		System.out.println("bit average = "+avg);
-		simple_double_decode("enc2.txt",doubleCode);
-
-		err = Math.abs((avg-doubleEntropy)/avg) * 100;
-
-		System.out.println("Present Error: "+err);
+		f4 = simple_double_encode(f2,doubleCode, doubleEntropy);
+		sc1 = new Scanner(f4);
+		System.out.println("Text from testTest.enc2:");
+		while(sc1.hasNextLine())
+			System.out.println(sc1.nextLine());
+		System.out.println("Text from testTest.dec1:");
+		simple_double_decode(f4,doubleCode);
+		System.out.println();
 
 	}
 
@@ -128,16 +137,18 @@ public class Encoder
 
 	}
 
-	public static double simple_encode(File file, HuffmanCode code)
+	public static File simple_encode(File file, HuffmanCode code, double entropy)
 	{
 		double totalBit = 0;
 		double count = 0;
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		Scanner sc = null;
+		File f = new File("testText.enc1");
 		try
 		{
-			fw = new FileWriter("enc1.txt");
+			//fw = new FileWriter("enc1.txt");
+			fw = new FileWriter(f);
 			//bw = new BufferedWriter(fw);
 			sc = new Scanner(file);
 		}
@@ -153,8 +164,10 @@ public class Encoder
 					totalBit+=s.length();
 					count++;
 					fw.write(s+"\n");
+					//System.out.print(s);
 				}
 				catch(Exception e){}
+				//System.out.println("\n");
 			}
 		}
 		try
@@ -166,11 +179,14 @@ public class Encoder
 				fw.close();
 		}
 		catch(Exception e){}
-
-		return totalBit/count;
+		double avg = totalBit/count;
+		System.out.println("bit average = "+avg);
+		double err = Math.abs((avg-entropy)/avg) * 100;
+		System.out.println("Present Error: "+err);
+		return f;
 	}
 
-	public static void simple_decode(String file, HuffmanCode code)
+	public static void simple_decode(File file, HuffmanCode code)
 	{
 		FileWriter fw = null;
 		BufferedWriter bw = null;
@@ -180,10 +196,10 @@ public class Encoder
 			fw = new FileWriter("testText.dec1");
 			//System.out.println("*");
 			bw = new BufferedWriter(fw);
-			File f = new File(file);
+			//File f = new File(file);
 			//System.out.println(f.getPath());
 			//System.out.println(f.exists());
-			sc = new Scanner(f);
+			sc = new Scanner(file);
 		}
 		catch(Exception e){System.out.println(e);}
 		while(sc.hasNextLine())
@@ -195,9 +211,11 @@ public class Encoder
 				{
 					String s = code.getKey(line);
 					fw.write(s);
+					System.out.print(s);
 				}
 				catch(Exception e){}
 			}
+			//System.out.println();
 			
 		}
 		try
@@ -211,16 +229,18 @@ public class Encoder
 		catch(Exception e){}	
 	}
 
-	public static double simple_double_encode(File file,HuffmanCode code)
+	public static File simple_double_encode(File file,HuffmanCode code, double entropy)
 	{
 		double totalBit = 0;
 		double count = 0;
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		Scanner _sc = null;
+		File f = new File("testText.enc2");
 		try
 		{
-			fw = new FileWriter("enc2.txt");
+			//fw = new FileWriter("enc2.txt");
+			fw = new FileWriter(f);
 			//bw = new BufferedWriter(fw);
 			_sc = new Scanner(file);
 		}
@@ -251,10 +271,14 @@ public class Encoder
 		}
 		catch(Exception e){}
 
-		return totalBit/count;
+		double avg = totalBit/count;
+		System.out.println("bit average = "+avg);
+		double err = Math.abs((avg-entropy)/avg) * 100;
+		System.out.println("Present Error: "+err);
+		return f;
 	}
 
-	public static void simple_double_decode(String file, HuffmanCode code)
+	public static void simple_double_decode(File file, HuffmanCode code)
 	{
 		FileWriter fw = null;
 		BufferedWriter bw = null;
@@ -263,8 +287,8 @@ public class Encoder
 		{
 			fw = new FileWriter("testText.dec2");
 			bw = new BufferedWriter(fw);
-			File f = new File(file);
-			sc = new Scanner(f);
+			//File f = new File(file);
+			sc = new Scanner(file);
 		}
 		catch(Exception e){System.out.println(e);}
 		while(sc.hasNextLine())
@@ -276,6 +300,7 @@ public class Encoder
 				{
 					String s = ""+code.getKey(line);
 					fw.write(s);
+					System.out.print(s);
 				}
 				catch(Exception e){}
 			}
